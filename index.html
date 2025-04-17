@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Guardian - Advanced Garbage Collection System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>Memory Guardian</h1>
+                <button id="toggle-sidebar" class="toggle-sidebar">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#dashboard"><span class="material-icons">dashboard</span> Dashboard</a></li>
+                    <li><a href="#gc-brain"><span class="material-icons">psychology</span> GC Brain</a></li>
+                    <li><a href="#performance"><span class="material-icons">speed</span> Performance</a></li>
+                    <li><a href="#settings"><span class="material-icons">settings</span> Settings</a></li>
+                    <li><a href="#help"><span class="material-icons">help</span> Help</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <h2 id="page-title">Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="material-icons">account_circle</span>
+                        <span id="username">Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <!-- Status Cards -->
+                <section class="status-cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Memory Usage</h3>
+                            <span class="material-icons">memory</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="memory-usage">
+                                <div class="memory-bar">
+                                    <div id="memory-used-bar" class="memory-used"></div>
+                                </div>
+                                <div class="memory-stats">
+                                    <div>
+                                        <span>Used:</span>
+                                        <span id="memory-used">0 KB</span>
+                                    </div>
+                                    <div>
+                                        <span>Total:</span>
+                                        <span id="memory-total">0 KB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>GC Runs</h3>
+                            <span class="material-icons">cleaning_services</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="gc-stats">
+                                <div>
+                                    <span>Today:</span>
+                                    <span id="gc-runs-today">0</span>
+                                </div>
+                                <div>
+                                    <span>Last Run:</span>
+                                    <span id="gc-last-run">Never</span>
+                                </div>
+                                <div>
+                                    <span>Avg Duration:</span>
+                                    <span id="gc-avg-duration">0 ms</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>CPU Impact</h3>
+                            <span class="material-icons">memory</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="cpu-impact">
+                                <div class="cpu-bar">
+                                    <div id="cpu-impact-bar" class="cpu-used"></div>
+                                </div>
+                                <div class="cpu-stats">
+                                    <div>
+                                        <span>Current:</span>
+                                        <span id="cpu-impact-current">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Fragmentation</h3>
+                            <span class="material-icons">grid_on</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="fragmentation">
+                                <div class="fragmentation-bar">
+                                    <div id="fragmentation-bar" class="fragmentation-level"></div>
+                                </div>
+                                <div class="fragmentation-stats">
+                                    <div>
+                                        <span>Current:</span>
+                                        <span id="fragmentation-current">0%</span>
+                                    </div>
+                                    <div>
+                                        <span>Level:</span>
+                                        <span id="fragmentation-level">Low</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Actions -->
+                <section class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button id="run-gc" class="action-button">
+                            <span class="material-icons">play_arrow</span>
+                            Run GC
+                        </button>
+                        <button id="optimize-memory" class="action-button">
+                            <span class="material-icons">tune</span>
+                            Optimize Memory
+                        </button>
+                        <button id="defragment" class="action-button">
+                            <span class="material-icons">grid_4x4</span>
+                            Defragment
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Memory Usage Chart -->
+                <section class="memory-chart">
+                    <h3>Memory Usage & Collection Activities</h3>
+                    <div class="chart-container">
+                        <canvas id="memory-usage-chart"></canvas>
+                    </div>
+                </section>
+
+                <!-- GC Activities -->
+                <section class="gc-activities">
+                    <h3>Recent GC Activities</h3>
+                    <div class="activities-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Algorithm</th>
+                                    <th>Duration</th>
+                                    <th>Memory Reclaimed</th>
+                                    <th>Objects Collected</th>
+                                    <th>CPU Impact</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gc-activities-body">
+                                <!-- Activities will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- GC Brain -->
+                <section class="gc-brain">
+                    <h3>Garbage Collection Brain</h3>
+                    <div class="gc-brain-container">
+                        <div class="memory-blocks" id="memory-blocks">
+                            <!-- Memory blocks will be populated by JavaScript -->
+                        </div>
+                        <div class="gc-algorithms">
+                            <h4>Active Algorithms</h4>
+                            <div id="gc-algorithms-list">
+                                <!-- Algorithms will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings -->
+                <section class="settings">
+                    <h3>Settings and Configuration</h3>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label for="auto-collection">Auto Collection</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="auto-collection" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="memory-threshold">Memory Threshold (%)</label>
+                            <input type="range" id="memory-threshold" min="50" max="90" value="75">
+                            <span id="memory-threshold-value">75%</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="time-interval">Time Interval (minutes)</label>
+                            <input type="number" id="time-interval" min="5" max="120" value="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="background-collection">Background Collection</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="background-collection" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cpu-limit">CPU Limit (%)</label>
+                            <input type="range" id="cpu-limit" min="5" max="50" value="20">
+                            <span id="cpu-limit-value">20%</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="collection-priority">Collection Priority</label>
+                            <select id="collection-priority">
+                                <option value="balanced">Balanced</option>
+                                <option value="speed">Speed</option>
+                                <option value="memory">Memory</option>
+                            </select>
+                        </div>
+                        <button id="save-settings" class="primary-button">Save Settings</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Other pages will be added here -->
+            <div id="gc-brain-page" class="page">
+                <section class="gc-brain-section">
+                    <h3>GC Brain</h3>
+                    <div class="gc-brain-container">
+                        <div class="gc-charts">
+                            <div class="chart-card">
+                                <h4>GC Performance</h4>
+                                <div class="chart-container">
+                                    <canvas id="gc-performance-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-card">
+                                <h4>Memory Allocation</h4>
+                                <div class="chart-container">
+                                    <canvas id="memory-allocation-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="memory-blocks-visualization">
+                            <h4>Memory Blocks</h4>
+                            <div class="memory-blocks" id="gc-brain-memory-blocks">
+                                <!-- Memory blocks will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="gc-algorithms">
+                            <h4>Active Algorithms</h4>
+                            <div id="gc-brain-algorithms-list">
+                                <!-- Algorithms will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="gc-activities">
+                            <h4>Recent GC Activities</h4>
+                            <div class="activities-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Algorithm</th>
+                                            <th>Duration</th>
+                                            <th>Memory Reclaimed</th>
+                                            <th>Objects Collected</th>
+                                            <th>CPU Impact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="gc-brain-activities-body">
+                                        <!-- Activities will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div id="performance-page" class="page">
+                <section class="performance-section">
+                    <h3>Performance</h3>
+                    <div class="performance-container">
+                        <div class="performance-charts">
+                            <div class="chart-card">
+                                <h4>CPU Usage</h4>
+                                <div class="chart-container">
+                                    <canvas id="cpu-usage-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-card">
+                                <h4>Memory Trend</h4>
+                                <div class="chart-container">
+                                    <canvas id="memory-trend-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="performance-metrics">
+                            <h4>Performance Metrics</h4>
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <h5>Average Response Time</h5>
+                                    <p id="avg-response-time">0 ms</p>
+                                </div>
+                                <div class="metric-card">
+                                    <h5>Peak Memory Usage</h5>
+                                    <p id="peak-memory-usage">0 KB</p>
+                                </div>
+                                <div class="metric-card">
+                                    <h5>GC Efficiency</h5>
+                                    <p id="gc-efficiency">0%</p>
+                                </div>
+                                <div class="metric-card">
+                                    <h5>Memory Leaks</h5>
+                                    <p id="memory-leaks">None</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div id="settings-page" class="page">
+                <section class="settings-section">
+                    <h3>Settings</h3>
+                    <div class="settings-container">
+                        <div class="settings-form">
+                            <h4>Garbage Collection Settings</h4>
+                            <div class="form-group">
+                                <label for="settings-auto-collection">Auto Collection</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="settings-auto-collection" checked>
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-memory-threshold">Memory Threshold (%)</label>
+                                <input type="range" id="settings-memory-threshold" min="50" max="90" value="75">
+                                <span id="settings-memory-threshold-value">75%</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-time-interval">Time Interval (minutes)</label>
+                                <input type="number" id="settings-time-interval" min="5" max="120" value="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-background-collection">Background Collection</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="settings-background-collection" checked>
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-cpu-limit">CPU Limit (%)</label>
+                                <input type="range" id="settings-cpu-limit" min="5" max="50" value="20">
+                                <span id="settings-cpu-limit-value">20%</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-collection-priority">Collection Priority</label>
+                                <select id="settings-collection-priority">
+                                    <option value="balanced">Balanced</option>
+                                    <option value="speed">Speed</option>
+                                    <option value="memory">Memory</option>
+                                </select>
+                            </div>
+                            <button id="settings-save" class="primary-button">Save Settings</button>
+                        </div>
+                        
+                        <div class="settings-advanced">
+                            <h4>Advanced Settings</h4>
+                            <div class="form-group">
+                                <label for="settings-gc-algorithm">Default GC Algorithm</label>
+                                <select id="settings-gc-algorithm">
+                                    <option value="mark-sweep">Mark-Sweep</option>
+                                    <option value="generational">Generational</option>
+                                    <option value="reference-counting">Reference Counting</option>
+                                    <option value="concurrent">Concurrent GC</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-compaction">Memory Compaction</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="settings-compaction" checked>
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-logging">Detailed Logging</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="settings-logging">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-notifications">Enable Notifications</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="settings-notifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div id="help-page" class="page"></div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/memory-manager.js"></script>
+</body>
+</html> 
